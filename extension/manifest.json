@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SciWideReader – full-width scientific journal articles",
-  "version": "1.4",
+  "version": "1.5",
   "description": "Hides sidebars on journal sites (Nature, Cell, Science, PNAS, PMC, bioRxiv...) so the article text and figures use the full width.",
   "permissions": [
     "storage",

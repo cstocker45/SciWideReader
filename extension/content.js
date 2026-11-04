@@ -4,7 +4,7 @@
 
   const KEY = "wr:" + location.hostname;          // per-site on/off
   const SETTINGS = "wr:settings";                  // global typography
-  const HIDE = "wr-hidden", WIDE = "wr-wide", FLAT = "wr-flat", ART = "wr-article", PAD = "wr-pad";
+  const HIDE = "wr-hidden", WIDE = "wr-wide", FLAT = "wr-flat", ART = "wr-article", PAD = "wr-pad", PARA = "wr-p";
   let on = false;
 
   const FONTS = {
@@ -32,15 +32,16 @@
   const typoStyle = document.createElement("style");
 
   function renderTypography(s = {}) {
-    const text = `html.wr-on .${ART} :is(p, li, figcaption, blockquote, dd, dt, td, th)`;
-    const all = `html.wr-on .${ART} :is(p, li, figcaption, blockquote, dd, dt, td, th, h1, h2, h3, h4, h5, h6)`;
+    // .wr-p marks every paragraph the article finder counted, including <div> paragraphs
+    const text = `html.wr-on .${ART} :is(p, .${PARA}, li, figcaption, blockquote, dd, dt, td, th)`;
+    const all = `html.wr-on .${ART} :is(p, .${PARA}, li, figcaption, blockquote, dd, dt, td, th, h1, h2, h3, h4, h5, h6)`;
     let css = "";
     if (s.font && FONTS[s.font]) css += `${all} { font-family: ${FONTS[s.font]} !important; }\n`;
     if (s.size) css += `${text} { font-size: ${s.size}px !important; }\n`;
     if (s.line) css += `${text} { line-height: ${s.line} !important; }\n`;
-    if (s.para != null) css += `html.wr-on .${ART} p { margin-top: 0 !important; margin-bottom: ${s.para}em !important; }\n`;
+    if (s.para != null) css += `html.wr-on .${ART} :is(p, .${PARA}) { margin-top: 0 !important; margin-bottom: ${s.para}em !important; }\n`;
     if (s.width && s.width < 100)
-      css += `html.wr-on .${ART}.${WIDE} { max-width: ${s.width}% !important; margin-left: auto !important; margin-right: auto !important; }\n`;
+      css += `html.wr-on .${ART}.${ART} { max-width: ${s.width}% !important; margin-left: auto !important; margin-right: auto !important; }\n`;
     typoStyle.textContent = css;
   }
 
@@ -102,6 +103,7 @@
     }
     document.documentElement.classList.add("wr-on");
     body.classList.add(ART);
+    for (const [p] of paragraphs()) if (body.contains(p)) p.classList.add(PARA);
     hide.forEach(e => e.classList.add(HIDE));
     widen.forEach(e => e.classList.add(WIDE));
     flatten.forEach(e => e.classList.add(FLAT));
@@ -136,7 +138,7 @@
 
   function clear() {
     document.documentElement.classList.remove("wr-on");
-    for (const c of [HIDE, WIDE, FLAT, ART, PAD])
+    for (const c of [HIDE, WIDE, FLAT, ART, PAD, PARA])
       document.querySelectorAll("." + c).forEach(e => e.classList.remove(c));
   }
 

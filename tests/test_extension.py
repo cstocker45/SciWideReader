@@ -148,3 +148,18 @@ def test_popup_step_buttons_and_ascii_bar(ext):
     assert bar() != before and bar().index("●") > before.index("●")
     popup.click('.row[data-key=line] .step[data-dir="-1"]')
     assert stored_settings(sw, lambda s: s.get("line") == 1.55)["line"] == 1.55
+
+
+@pytest.mark.parametrize("layout", ["flex-right", "div-paragraphs", "grid-areas", "grid-lines", "nested"])
+def test_typography_applies_on_every_layout(ext, layout):
+    """Every control must visibly change body text, whatever element the paragraphs are."""
+    ctx, sw = ext
+    sw.evaluate("""chrome.storage.local.set({'wr:settings':
+        {font: 'serif', size: 21, line: 2, para: 1.5, width: 70}})""")
+    page = open_layout(ctx, layout)
+    para = "#article > div:not(.abstract) .u-margin-s-bottom, #article section .u-margin-s-bottom, #article p:not(.authors)"
+    p = page.evaluate("""(sel) => { const el = document.querySelector(sel); const s = getComputedStyle(el);
+        return {size: s.fontSize, line: s.lineHeight, font: s.fontFamily, mb: s.marginBottom}; }""", para)
+    assert p["size"] == "21px" and p["line"] == "42px" and "Georgia" in p["font"] and p["mb"] == "31.5px", p
+    m = page.evaluate(MEASURE)
+    assert 0.6 < m["widthRatio"] < 0.75, m
