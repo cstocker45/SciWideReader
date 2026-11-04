@@ -19,8 +19,9 @@
     .${HIDE} { display: none !important; }
     .${WIDE} { width: auto !important; max-width: none !important; flex: 1 1 auto !important;
                float: none !important; margin-left: 0 !important; margin-right: 0 !important;
-               grid-column: 1 / -1 !important; }
-    .${FLAT} { max-width: none !important; grid-template-columns: minmax(0, 1fr) !important; }
+               grid-area: auto !important; grid-column: 1 / -1 !important; }
+    .${FLAT} { max-width: none !important; grid-template-columns: minmax(0, 1fr) !important;
+               grid-template-areas: none !important; }
     .${PAD} { padding-left: max(2vw, 16px) !important; padding-right: max(2vw, 16px) !important;
               box-sizing: border-box !important; }
     html.wr-on figure img, html.wr-on .${WIDE} img { max-width: 100% !important; height: auto !important; }

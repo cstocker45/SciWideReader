@@ -107,6 +107,13 @@ LAYOUTS = {
           <h3>Recommended articles</h3>""" + "".join(f'<p>{PARA}</p>' for _ in range(6)) + """
         </div>
       </div>"""),
+    # eLife-style named-area grid (grid-template-areas defines extra columns)
+    "grid-areas": page("grid-areas", f"""
+      <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:24px;max-width:1344px;margin:0 auto;
+                  grid-template-areas:'main main main main main main main main side side side side'">
+        <div style="grid-area:main">{ARTICLE}</div>
+        {SIDEBAR.format(id="side", style="grid-area:side")}
+      </div>"""),
     # Frontiers-style sticky action rail that only appears after the first pass
     "late-floating-rail": page("late-floating-rail", f"""
       <div style="max-width:1280px;margin:0 auto;padding:0 60px;position:relative">
