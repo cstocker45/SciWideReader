@@ -119,3 +119,20 @@ def test_manifest_is_valid():
     for f in ["background.js", "content.js", "popup.html", "popup.js"]:
         assert (EXT / f).exists(), f
     assert m["content_scripts"][0]["js"] == ["content.js"]
+
+
+def test_popup_step_buttons_and_ascii_bar(ext):
+    ctx, sw = ext
+    ext_id = sw.url.split("/")[2]
+    popup = ctx.new_page()
+    popup.goto(f"chrome-extension://{ext_id}/popup.html")
+    bar = lambda: popup.inner_text('.row[data-key=size] .bar')
+    assert bar().startswith("[") and bar().endswith("]") and "▓" in bar()
+    before = bar()
+    for _ in range(3):
+        popup.click('.row[data-key=size] .step[data-dir="1"]')
+    stored = sw.evaluate("chrome.storage.local.get('wr:settings').then(v => v['wr:settings'])")
+    assert stored["size"] == 20          # default 17 + 3 steps
+    assert bar() != before and bar().index("▓") > before.index("▓")
+    popup.click('.row[data-key=line] .step[data-dir="-1"]')
+    assert sw.evaluate("chrome.storage.local.get('wr:settings').then(v => v['wr:settings'].line)") == 1.55
