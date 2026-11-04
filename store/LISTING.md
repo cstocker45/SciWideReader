@@ -1,6 +1,6 @@
 # Chrome Web Store listing (copy into the developer dashboard)
 
-**Name:** WideReader – full-width journal articles
+**Name:** SciWideReader – full-width scientific journal articles
 **Category:** Productivity (or Education)
 **Language:** English
 
@@ -8,7 +8,7 @@
 Hides sidebars on journal websites (Nature, Cell, Science, PMC, bioRxiv…) so the paper uses the full width. Adjustable typography.
 
 **Description:**
-Reading papers on publisher websites means squinting at a narrow column squeezed between a table of contents, "related articles", metrics and download boxes. WideReader hides everything that sits beside the article, so the text and figures use the full width of your browser.
+Reading papers on publisher websites means squinting at a narrow column squeezed between a table of contents, "related articles", metrics and download boxes. SciWideReader hides everything that sits beside the article, so the text and figures use the full width of your browser.
 
 • Works on ~30 journal sites out of the box: Nature, Cell Press, Science, PNAS, PubMed Central, bioRxiv/medRxiv, eLife, PLOS, BMC, Springer, Wiley, Oxford Academic, EMBO, Frontiers, MDPI, JCI, arXiv and more
 • Any other site: click the toolbar menu or press Alt+W
@@ -17,7 +17,7 @@ Reading papers on publisher websites means squinting at a narrow column squeezed
 • Remembers on/off per site
 • No data collection, no network requests, no account
 
-Open source: https://github.com/cstocker45/WideReader
+Open source: https://github.com/cstocker45/SciWideReader
 
 **Single purpose (dashboard field):**
 Make scientific articles on journal websites easier to read by hiding sidebars and letting the article use the full browser width, with adjustable typography.
@@ -31,9 +31,9 @@ Make scientific articles on journal websites easier to read by hiding sidebars a
 
 **Data usage:** Does not collect or use any user data (tick none of the categories). Certify all three disclosures.
 
-**Privacy policy URL:** https://cstocker45.github.io/WideReader/privacy.html
-**Homepage URL:** https://cstocker45.github.io/WideReader/
-**Support URL:** https://github.com/cstocker45/WideReader/issues
+**Privacy policy URL:** https://cstocker45.github.io/SciWideReader/privacy.html
+**Homepage URL:** https://cstocker45.github.io/SciWideReader/
+**Support URL:** https://github.com/cstocker45/SciWideReader/issues
 
 **Assets (in this folder):**
 - icon128.png (store icon)

@@ -31,6 +31,17 @@ MEASURE = """() => {
 }"""
 
 
+def stored_settings(sw, until=lambda s: True, timeout=3.0):
+    """Read saved settings, polling until `until(settings)` holds (popup saves are async)."""
+    import time
+    end = time.time() + timeout
+    while True:
+        s = sw.evaluate("chrome.storage.local.get('wr:settings').then(v => v['wr:settings'] || {})")
+        if until(s) or time.time() > end:
+            return s
+        time.sleep(0.05)
+
+
 def open_layout(ctx, name, wait_ms=0):
     page = ctx.new_page()
     page.route(BASE + "**", lambda route: route.fulfill(
@@ -103,14 +114,14 @@ def test_popup_controls_write_settings(ext):
     ext_id = sw.url.split("/")[2]
     popup = ctx.new_page()
     popup.goto(f"chrome-extension://{ext_id}/popup.html")
+    popup.wait_for_function("document.querySelector('.row[data-key=size] .bar').textContent.includes('●')")
     popup.click("#fonts button[data-font=book]")
     popup.fill('.row[data-key=line] input', "1.9")
-    popup.click("#fonts button[data-font=book]")  # flush
-    stored = sw.evaluate("chrome.storage.local.get('wr:settings').then(v => v['wr:settings'])")
+    stored = stored_settings(sw, lambda s: s.get("font") == "book" and s.get("line") == 1.9)
     assert stored["font"] == "book" and stored["line"] == 1.9
     assert "1.90" in popup.inner_text('.row[data-key=line] .val')
     popup.click("#reset")
-    assert sw.evaluate("chrome.storage.local.get('wr:settings').then(v => v['wr:settings'])") == {}
+    assert stored_settings(sw, lambda s: s == {}) == {}
 
 
 def test_manifest_is_valid():
@@ -127,12 +138,13 @@ def test_popup_step_buttons_and_ascii_bar(ext):
     popup = ctx.new_page()
     popup.goto(f"chrome-extension://{ext_id}/popup.html")
     bar = lambda: popup.inner_text('.row[data-key=size] .bar')
-    assert bar().startswith("[") and bar().endswith("]") and "▓" in bar()
+    popup.wait_for_function("document.querySelector('.row[data-key=size] .bar').textContent.includes('●')")
+    assert "●" in bar() and len(bar()) >= 8
     before = bar()
     for _ in range(3):
         popup.click('.row[data-key=size] .step[data-dir="1"]')
-    stored = sw.evaluate("chrome.storage.local.get('wr:settings').then(v => v['wr:settings'])")
+    stored = stored_settings(sw, lambda s: s.get("size") == 20)
     assert stored["size"] == 20          # default 17 + 3 steps
-    assert bar() != before and bar().index("▓") > before.index("▓")
+    assert bar() != before and bar().index("●") > before.index("●")
     popup.click('.row[data-key=line] .step[data-dir="-1"]')
-    assert sw.evaluate("chrome.storage.local.get('wr:settings').then(v => v['wr:settings'].line)") == 1.55
+    assert stored_settings(sw, lambda s: s.get("line") == 1.55)["line"] == 1.55

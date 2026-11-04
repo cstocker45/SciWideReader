@@ -8,7 +8,7 @@ from playwright.sync_api import sync_playwright
 
 HERE = pathlib.Path(__file__).parent
 sys.path.insert(0, str(HERE.parent / "tests"))
-from conftest import launch  # noqa: E402
+from browser import launch  # noqa: E402
 from fixtures import LAYOUTS  # noqa: E402
 
 URL = "https://www.nature.com/wr-test/grid-3col"

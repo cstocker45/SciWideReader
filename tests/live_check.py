@@ -17,7 +17,7 @@ import tempfile
 
 from playwright.sync_api import sync_playwright
 
-from conftest import launch
+from browser import launch
 
 HERE = pathlib.Path(__file__).parent
 BLOCK_MARKERS = ["just a moment", "attention required", "access denied", "are you a robot",

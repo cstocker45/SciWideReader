@@ -1,12 +1,12 @@
 <p align="center"><img src="store/icon-preview.png" width="128" alt=""></p>
 
-# WideReader
+# SciWideReader
 
-[![CI / Pages](https://github.com/cstocker45/WideReader/actions/workflows/ci.yml/badge.svg)](https://github.com/cstocker45/WideReader/actions/workflows/ci.yml)
+[![CI / Pages](https://github.com/cstocker45/SciWideReader/actions/workflows/ci.yml/badge.svg)](https://github.com/cstocker45/SciWideReader/actions/workflows/ci.yml)
 
 Chrome extension that hides sidebars on journal websites (Nature, Cell, Science, PNAS, PMC, bioRxiv, eLife, …) so the article text and figures use the full width of the browser. Includes a menu for font, text size, line spacing, paragraph spacing and text width.
 
-**Website, download & live publisher status:** https://cstocker45.github.io/WideReader/
+**Website, download & live publisher status:** https://cstocker45.github.io/SciWideReader/
 
 | before | after |
 |---|---|
@@ -15,7 +15,7 @@ Chrome extension that hides sidebars on journal websites (Nature, Cell, Science,
 ## Install
 
 - **Chrome Web Store:** *(link coming once the listing is approved)*
-- **Manual:** download [WideReader.zip](https://cstocker45.github.io/WideReader/WideReader.zip), unzip, open `chrome://extensions`, enable *Developer mode*, *Load unpacked* → the unzipped folder (or the `extension/` folder of this repo).
+- **Manual:** download [SciWideReader.zip](https://cstocker45.github.io/SciWideReader/SciWideReader.zip), unzip, open `chrome://extensions`, enable *Developer mode*, *Load unpacked* → the unzipped folder (or the `extension/` folder of this repo).
 
 Toolbar icon opens the menu; **Alt+W** toggles the current site.
 

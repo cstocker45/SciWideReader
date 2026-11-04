@@ -32,10 +32,10 @@ jobs:
       - run: python scripts/build.py --repo "${{ github.repository }}"
       - name: GitHub Release
         env: { GH_TOKEN: "${{ github.token }}" }
-        run: gh release create "$GITHUB_REF_NAME" dist/WideReader-*.zip --generate-notes --title "WideReader $GITHUB_REF_NAME"
+        run: gh release create "$GITHUB_REF_NAME" dist/SciWideReader-*.zip --generate-notes --title "SciWideReader $GITHUB_REF_NAME"
       - name: Publish to Chrome Web Store
         if: ${{ env.CWS_CLIENT_ID != '' }}
         run: |
-          npx --yes chrome-webstore-upload-cli@3 upload --source dist/WideReader.zip \
+          npx --yes chrome-webstore-upload-cli@3 upload --source dist/SciWideReader.zip \
             --extension-id "$CWS_EXTENSION_ID" --client-id "$CWS_CLIENT_ID" \
             --client-secret "$CWS_CLIENT_SECRET" --refresh-token "$CWS_REFRESH_TOKEN" --auto-publish

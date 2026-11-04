@@ -1,4 +1,4 @@
-// Shared helper: switch WideReader on/off for a tab's site, injecting the script if needed.
+// Shared helper: switch SciWideReader on/off for a tab's site, injecting the script if needed.
 async function setSite(tab, on) {
   const key = "wr:" + new URL(tab.url).hostname;
   await chrome.storage.local.set({ [key]: on });

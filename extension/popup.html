@@ -3,103 +3,94 @@
 <head>
 <meta charset="utf-8">
 <style>
+  /* Clean, quiet, mono. One accent for state and values; follows the browser's
+     light/dark setting. ASCII is used for the controls, not as decoration. */
   :root {
-    --bg: #0b0d0c; --panel: #0e1110; --well: #080a09; --hover: rgba(45, 212, 178, 0.1);
-    --line: #1a201e; --line-ctl: #232b28;
-    --text: #c9d4cf; --text-hi: #eaf2ee; --muted: #8b9a93; --dim: #66736d; --faint: #4e5a55;
-    --accent: oklch(0.8 0.11 168); --accent-on: #06100c; --warn: #d8a657;
+    color-scheme: light dark;
+    --bg: #ffffff; --panel: #f7f8f7; --well: #f3f4f3; --hover: rgba(15, 140, 110, 0.07);
+    --line: #e6e8e7; --line-ctl: #d9dddb;
+    --text: #2b302e; --text-hi: #111413; --muted: #66706c; --dim: #8b9590; --faint: #b3bab7;
+    --accent: #0f8c6e; --warn: #b5762a;
     --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    --glow: 0 0 6px color-mix(in oklab, var(--accent) 55%, transparent);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161a19; --panel: #1b201e; --well: #121514; --hover: rgba(45, 212, 178, 0.08);
+      --line: #262c2a; --line-ctl: #313835;
+      --text: #c9d4cf; --text-hi: #eaf2ee; --muted: #8b9a93; --dim: #6b7873; --faint: #46504c;
+      --accent: #4cc9a8; --warn: #d8a657;
+    }
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); }
-  body {
-    width: 300px; color: var(--text); font: 12.5px/1.45 var(--mono);
-    -webkit-font-smoothing: antialiased; position: relative;
-  }
-  /* faint CRT scanlines */
-  body::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.018) 0 1px, transparent 1px 3px);
-  }
+  body { width: 300px; color: var(--text); font: 12px/1.45 var(--mono); -webkit-font-smoothing: antialiased; }
   button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
   :focus { outline: none; }
   :focus-visible { outline: 1px solid var(--accent); outline-offset: 1px; }
 
-  header { padding: 12px 14px 10px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  header { padding: 12px 14px 10px; border-bottom: 1px solid var(--line); }
   .brand { display: flex; align-items: baseline; justify-content: space-between; }
-  .title { color: var(--text-hi); font-weight: 600; letter-spacing: 0.06em; }
-  .title b { color: var(--accent); font-weight: 600; text-shadow: var(--glow); }
-  .pulse { color: var(--dim); width: 1ch; display: inline-block; text-align: center; }
-  .pulse[data-on] { color: var(--accent); text-shadow: var(--glow); }
-  .host { color: var(--dim); font-size: 11px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .host::before { content: "> "; color: var(--faint); }
+  .title { color: var(--text-hi); font-weight: 600; }
+  .title b { color: var(--accent); font-weight: 600; }
+  .pulse { color: var(--faint); font-size: 10px; }
+  .pulse[data-on] { color: var(--accent); }
+  .host { color: var(--dim); font-size: 11px; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* [X] wide view */
+  /* [x] wide view on this site */
   .site { display: flex; align-items: center; gap: 8px; margin-top: 10px; cursor: pointer; user-select: none; }
   .site input { position: absolute; opacity: 0; pointer-events: none; }
   .site .box { color: var(--dim); white-space: pre; }
   .site .box::before { content: "[ ]"; }
-  .site input:checked + .box { color: var(--accent); text-shadow: var(--glow); }
-  .site input:checked + .box::before { content: "[X]"; }
+  .site input:checked + .box { color: var(--accent); }
+  .site input:checked + .box::before { content: "[x]"; }
   .site input:focus-visible + .box { outline: 1px solid var(--accent); outline-offset: 1px; }
-  .site input:disabled ~ * { opacity: 0.4; cursor: default; }
-  .site .state { color: var(--muted); }
-  .site input:checked ~ .state { color: var(--text-hi); }
+  .site input:disabled ~ * { opacity: 0.45; cursor: default; }
+  .site .state { color: var(--text); }
   .note { display: none; color: var(--warn); font-size: 11px; padding: 8px 14px 0; }
 
-  section { padding: 12px 14px 4px; }
-  h2 { display: flex; gap: 8px; align-items: center; margin: 0 0 12px; font: 600 10.5px var(--mono);
-       letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
-  h2::before { content: "//"; color: var(--accent); }
-  h2::after { content: ""; flex: 1; border-top: 1px dashed var(--line-ctl); }
-  h2 small { font-weight: 400; letter-spacing: 0.04em; text-transform: none; color: var(--dim); order: 2; }
+  section { padding: 12px 14px 2px; }
+  h2 { display: flex; justify-content: space-between; margin: 0 0 10px; font: 500 11px var(--mono); color: var(--muted); }
+  h2 small { font-weight: 400; color: var(--dim); }
 
-  .row { margin-bottom: 13px; }
-  .row-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; }
-  .label { color: var(--muted); text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em; }
-  .val { color: var(--accent); font-weight: 600; text-shadow: var(--glow); font-variant-numeric: tabular-nums; }
-  .row.default .val { color: var(--dim); font-weight: 400; text-shadow: none; }
-  .val button { color: var(--dim); margin-left: 6px; text-shadow: none; }
+  .row { margin-bottom: 12px; }
+  .row-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
+  .label { color: var(--muted); font-size: 11px; }
+  .val { color: var(--text-hi); font-variant-numeric: tabular-nums; }
+  .row.default .val { color: var(--dim); }
+  .val button { color: var(--dim); margin-left: 6px; }
   .val button:hover { color: var(--accent); }
 
   /* ASCII slider: a real <input type=range> lies invisibly over the glyph bar */
   .slider { display: flex; align-items: center; gap: 2px; }
   .step { color: var(--dim); width: 2ch; height: 20px; text-align: center; border-radius: 3px; }
-  .step:hover { color: var(--accent); text-shadow: var(--glow); background: var(--hover); }
-  .track { position: relative; flex: 1; height: 20px; display: flex; align-items: center; justify-content: center;
-           background: var(--well); border: 1px solid var(--line-ctl); border-radius: 3px; }
-  .bar { white-space: pre; letter-spacing: -0.02em; pointer-events: none; color: var(--accent); text-shadow: var(--glow); }
-  .bar .rest { color: var(--faint); text-shadow: none; }
-  .bar .thumb { color: var(--text-hi); }
-  .row.default .bar { color: var(--dim); text-shadow: none; }
-  .row.default .bar .thumb { color: var(--muted); }
+  .step:hover { color: var(--text-hi); background: var(--hover); }
+  .track { position: relative; flex: 1; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 3px; }
+  .track:hover { background: var(--hover); }
+  .bar { white-space: pre; pointer-events: none; color: var(--accent); }
+  .bar .rest { color: var(--faint); }
+  .bar .thumb { color: var(--accent); }
+  .row.default .bar, .row.default .bar .thumb { color: var(--dim); }
   .track input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
-  .track:hover { border-color: color-mix(in oklab, var(--accent) 40%, var(--line-ctl)); }
-  .track:has(input:focus-visible) { border-color: var(--accent); box-shadow: 0 0 8px color-mix(in oklab, var(--accent) 30%, transparent); }
+  .track:has(input:focus-visible) { outline: 1px solid var(--accent); }
 
-  /* font picker: [Aa] cells, selected one bracketed in accent */
   .fonts { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
-  .fonts button { border: 1px solid var(--line-ctl); border-radius: 3px; padding: 5px 0 4px; font-size: 15px; line-height: 1.1;
-                  color: var(--text); background: var(--well); }
-  .fonts button small { display: block; font: 9px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--dim); margin-top: 3px; }
+  .fonts button { border: 1px solid var(--line-ctl); border-radius: 4px; padding: 5px 0 4px; font-size: 15px; line-height: 1.1; color: var(--text); }
+  .fonts button small { display: block; font: 9.5px var(--mono); color: var(--dim); margin-top: 2px; }
   .fonts button:hover { background: var(--hover); }
-  .fonts button.sel { border-color: var(--accent); color: var(--accent); text-shadow: var(--glow);
-                      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 35%, transparent), 0 0 8px color-mix(in oklab, var(--accent) 20%, transparent); }
+  .fonts button.sel { border-color: var(--accent); color: var(--accent); }
   .fonts button.sel small { color: var(--accent); }
-  .fonts button.sel small::before { content: ">"; } .fonts button.sel small::after { content: "<"; }
 
-  footer { display: flex; justify-content: space-between; align-items: center; padding: 9px 14px 12px;
-           border-top: 1px solid var(--line); background: var(--panel); color: var(--dim); font-size: 11px; }
+  footer { display: flex; justify-content: space-between; align-items: center; padding: 9px 14px 11px;
+           border-top: 1px solid var(--line); color: var(--dim); font-size: 11px; }
   kbd { font: 10.5px var(--mono); color: var(--muted); border: 1px solid var(--line-ctl); border-radius: 3px; padding: 0 4px; }
-  #reset { color: var(--muted); border: 1px solid var(--line-ctl); border-radius: 3px; padding: 2px 8px; letter-spacing: 0.06em; }
-  #reset:hover { color: var(--warn); border-color: var(--warn); }
+  #reset { color: var(--muted); border: 1px solid var(--line-ctl); border-radius: 4px; padding: 2px 8px; }
+  #reset:hover { color: var(--text-hi); background: var(--hover); }
 </style>
 </head>
 <body>
   <header>
     <div class="brand">
-      <span class="title">WIDE<b>//</b>READER</span>
+      <span class="title"><b>Sci</b>WideReader</span>
       <span class="pulse" id="pulse" aria-hidden="true">·</span>
     </div>
     <div class="host" id="host">—</div>
@@ -109,7 +100,7 @@
       <span class="state">wide view on this site</span>
     </label>
   </header>
-  <div class="note" id="note">!! not available on this page</div>
+  <div class="note" id="note">Not available on this page.</div>
 
   <section>
     <h2>typography <small>all sites</small></h2>
@@ -153,7 +144,7 @@
 
   <footer>
     <span><kbd>ALT</kbd>+<kbd>W</kbd> toggle</span>
-    <button id="reset">[ RESET ]</button>
+    <button id="reset">reset</button>
   </footer>
   <script src="popup.js"></script>
 </body>
