@@ -37,6 +37,7 @@ MEASURE = """() => {
     if (art.contains(el) || el.contains(art) || !vis(el)) continue;
     const s = el.getBoundingClientRect();
     if (s.width < 150 || s.height < 150 || getComputedStyle(el).position === 'fixed') continue;
+    if (s.left >= vw || s.right <= 0) continue;  // pushed off-screen: not visible to the reader
     const vOverlap = Math.min(r.bottom, s.bottom) - Math.max(r.top, s.top);
     if (vOverlap > 150 && (s.left >= r.right - 5 || s.right <= r.left + 5)) beside.push(
       el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\\s+/)[0] : ''));
@@ -46,6 +47,7 @@ MEASURE = """() => {
     widthRatio: +(r.width / vw).toFixed(3),
     articleText: art.innerText.length,
     hidden: document.querySelectorAll('.wr-hidden').length,
+    sideScroll: document.scrollingElement.scrollWidth - document.documentElement.clientWidth,
     beside: beside.slice(0, 5),
   };
 }"""
@@ -77,6 +79,8 @@ def check(ctx, pub, shots):
             res["status"], res["reason"] = "fail", f"picked a too-small block as the article ({m['articleText']} chars)"
         elif m["beside"]:
             res["status"], res["reason"] = "fail", "still visible beside article: " + ", ".join(m["beside"])
+        elif m["sideScroll"] > 5:
+            res["status"], res["reason"] = "fail", f"page now scrolls sideways by {m['sideScroll']}px"
         elif m["widthRatio"] < 0.8:
             res["status"], res["reason"] = "fail", f"article only {m['widthRatio']:.0%} of window width"
         else:
