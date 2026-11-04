@@ -90,6 +90,23 @@ LAYOUTS = {
       </div>
       <script>setTimeout(() => document.getElementById('row').insertAdjacentHTML('beforeend',
         `{SIDEBAR.format(id="side", style="flex:0 0 30%")}`), 800);</script>"""),
+    # ScienceDirect-style: body paragraphs are <div>s, while the "recommended
+    # articles" sidebar uses <p> abstracts (so a <p>-only heuristic picks the sidebar)
+    "div-paragraphs": page("div-paragraphs", """
+      <div class="Article" style="display:flex;max-width:1280px;margin:0 auto;gap:24px">
+        <div class="center" style="flex:0 0 62%">
+          <div id="article">
+            <h1>A synthetic article for layout testing</h1>
+            <div class="abstract"><h2>Abstract</h2><div class="u-margin-s-bottom">""" + PARA * 2 + """</div></div>
+            <section><h2>Introduction</h2>""" + "".join(f'<div class="u-margin-s-bottom">{PARA * 2}</div>' for _ in range(4)) + """</section>
+            <figure id="fig1"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='2000' height='800'><rect width='2000' height='800' fill='%2399c'/></svg>" width="2000" height="800" alt=""><figcaption>Figure 1.</figcaption></figure>
+            <section><h2>Results</h2>""" + "".join(f'<div class="u-margin-s-bottom">{PARA * 2}</div>' for _ in range(4)) + """</section>
+          </div>
+        </div>
+        <div data-sidebar id="side" class="rhs" style="flex:0 0 34%">
+          <h3>Recommended articles</h3>""" + "".join(f'<p>{PARA}</p>' for _ in range(6)) + """
+        </div>
+      </div>"""),
     # Frontiers-style sticky action rail that only appears after the first pass
     "late-floating-rail": page("late-floating-rail", f"""
       <div style="max-width:1280px;margin:0 auto;padding:0 60px;position:relative">

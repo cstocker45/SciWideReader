@@ -41,18 +41,38 @@
   }
 
   // Element holding the most paragraph text = the article body.
+  // A "paragraph" is a <p>, or a text-only <div> (ScienceDirect and some other
+  // platforms mark up body paragraphs as <div class="u-margin-s-bottom">).
+  const BLOCKS = "div, p, section, article, ul, ol, table, figure, li, h1, h2, h3, h4, h5, h6";
+  function paragraphs() {
+    const out = [];
+    for (const el of document.querySelectorAll("p, div")) {
+      if (el.tagName === "DIV" && el.querySelector(BLOCKS)) continue;
+      const len = el.textContent.trim().length;
+      if (len < (el.tagName === "P" ? 40 : 80) || !el.offsetParent) continue;
+      if (el.closest("nav, header, footer, aside")) continue;
+      out.push([el, len]);
+    }
+    return out;
+  }
+
+  // Element holding the most paragraph text = the article body; then climb to the
+  // whole column it sits in (title, abstract, figures, references), stopping at
+  // the first wrapper that is much wider, i.e. the one that also holds sidebars.
   function findArticleBody() {
     const score = new Map();
-    for (const p of document.querySelectorAll("p")) {
-      const len = p.textContent.trim().length;
-      if (len < 40 || !p.offsetParent) continue;
-      const parent = p.parentElement;
-      score.set(parent, (score.get(parent) || 0) + len);
-    }
+    for (const [el, len] of paragraphs())
+      score.set(el.parentElement, (score.get(el.parentElement) || 0) + len);
     let best = null, bestScore = 0;
     for (const [el, s] of score) if (s > bestScore) { best = el; bestScore = s; }
-    // Prefer an enclosing <article>/<main> if there is one (keeps title, figures, refs).
-    return best && (best.closest("article, main, [role=main]") || best);
+    if (!best) return null;
+    const w = best.getBoundingClientRect().width;
+    let el = best;
+    while (el.parentElement && el.parentElement !== document.body) {
+      if (el.parentElement.getBoundingClientRect().width > w * 1.2 + 40) break;
+      el = el.parentElement;
+    }
+    return el;
   }
 
   const overlapV = (a, b) => a.top < b.bottom - 5 && b.top < a.bottom - 5;
