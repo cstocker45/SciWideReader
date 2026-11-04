@@ -1,0 +1,19 @@
+[
+  {"name": "Nature", "url": "https://www.nature.com/articles/s41586-021-03819-2"},
+  {"name": "Nature Communications", "url": "https://www.nature.com/articles/s41467-026-78934-7"},
+  {"name": "PubMed Central", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8371605/"},
+  {"name": "eLife", "url": "https://elifesciences.org/articles/05005"},
+  {"name": "PLOS Biology", "url": "https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1002106"},
+  {"name": "BMC (BioMed Central)", "url": "https://genomebiology.biomedcentral.com/articles/10.1186/s13059-017-1382-0"},
+  {"name": "Frontiers", "url": "https://www.frontiersin.org/articles/10.3389/fimmu.2020.01949/full"},
+  {"name": "MDPI", "url": "https://www.mdpi.com/2073-4409/9/1/116"},
+  {"name": "EMBO Press", "url": "https://www.embopress.org/doi/full/10.15252/msb.20188746"},
+  {"name": "bioRxiv", "url": "https://www.biorxiv.org/content/10.1101/2020.02.07.937862v1.full"},
+  {"name": "Cell Press", "url": "https://www.cell.com/cell/fulltext/S0092-8674(21)00583-3"},
+  {"name": "Science", "url": "https://www.science.org/doi/10.1126/science.abj8754"},
+  {"name": "PNAS", "url": "https://www.pnas.org/doi/10.1073/pnas.2016239118"},
+  {"name": "Oxford Academic", "url": "https://academic.oup.com/nar/article/49/D1/D480/6006196"},
+  {"name": "Wiley", "url": "https://onlinelibrary.wiley.com/doi/full/10.1002/advs.202004126"},
+  {"name": "JCI", "url": "https://www.jci.org/articles/view/140766"},
+  {"name": "arXiv (HTML)", "url": "https://arxiv.org/html/2310.06825"}
+]

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WideReader</title>
+<meta name="description" content="A Chrome extension that hides sidebars on journal websites so the article text and figures use the full width of your browser.">
+<link rel="icon" href="icon128.png">
+<style>
+  :root {
+    --bg: #fbfbf8; --fg: #16181d; --muted: #5d636e; --line: #e4e4de; --card: #ffffff;
+    --accent: #13965f; --accent-ink: #ffffff; --term: #0d1117; --term-fg: #3fdc8a;
+    --pass: #13965f; --fail: #d1383d; --blocked: #8a8f98;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --line: #262c36; --card: #151b23;
+            --accent: #3fdc8a; --accent-ink: #0d1117; --term: #010409; --blocked: #6e7681; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+  a { color: var(--accent); }
+  header { padding: 56px 0 32px; display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; }
+  header img { width: 112px; height: 112px; border-radius: 24px; }
+  h1 { font: 700 40px/1.1 var(--mono); margin: 0 0 8px; letter-spacing: -0.02em; }
+  h1 span { color: var(--accent); }
+  .tag { font-size: 19px; color: var(--muted); margin: 0; max-width: 620px; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .btn { font: 600 14px var(--mono); padding: 10px 16px; border-radius: 8px; text-decoration: none;
+         border: 1px solid var(--line); color: var(--fg); background: var(--card); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  h2 { font: 700 13px var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
+       margin: 56px 0 16px; }
+  h2::before { content: "## "; color: var(--accent); }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  figure { margin: 0; }
+  figure img { width: 100%; display: block; border: 1px solid var(--line); border-radius: 10px; }
+  figcaption { font: 13px var(--mono); color: var(--muted); margin-top: 6px; }
+  .features { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .card b { display: block; font-family: var(--mono); font-size: 14px; margin-bottom: 4px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  pre, .term { background: var(--term); color: var(--term-fg); font: 14px/1.6 var(--mono);
+               border-radius: 10px; padding: 16px 18px; overflow-x: auto; margin: 0; }
+  .term .c { color: #8b949e; }
+  ol.steps { padding-left: 20px; margin: 0; } ol.steps li { margin: 6px 0; }
+  kbd { font: 13px var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; background: var(--card); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  td.reason { color: var(--muted); font-size: 13.5px; }
+  .pill { font: 600 12px var(--mono); padding: 2px 8px; border-radius: 99px; white-space: nowrap; color: #fff; }
+  .pill.pass { background: var(--pass); } .pill.fail { background: var(--fail); } .pill.blocked { background: var(--blocked); }
+  .summary { font: 14px var(--mono); color: var(--muted); margin-bottom: 10px; }
+  .note { font-size: 14px; color: var(--muted); margin-top: 10px; }
+  footer { margin: 72px 0 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted);
+           display: flex; gap: 18px; flex-wrap: wrap; }
+  @media (max-width: 640px) {
+    header { grid-template-columns: 1fr; padding-top: 32px; } header img { width: 80px; height: 80px; }
+    h1 { font-size: 32px; } .compare, .features { grid-template-columns: 1fr; }
+    td.reason { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="icon128.png" alt="">
+    <div>
+      <h1>&lt;Wide<span>Reader</span>&gt;</h1>
+      <p class="tag">Hides the sidebars on journal websites so the paper itself (text and figures) gets the full width of your browser. Adjustable font, text size and line spacing.</p>
+      <div class="buttons">
+        <a class="btn primary" id="cws" href="{{CWS_URL}}">Add to Chrome</a>
+        <a class="btn" href="WideReader.zip">Download .zip</a>
+        <a class="btn" href="https://github.com/{{REPO}}">GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <h2>Before / after</h2>
+  <div class="compare">
+    <figure><img src="screenshot-1-before.png" alt="Journal page with table of contents on the left and related articles on the right"><figcaption>before: three columns</figcaption></figure>
+    <figure><img src="screenshot-3-menu.png" alt="Same page with sidebars hidden, article spanning the window, and the settings menu open"><figcaption>after: article only, with the settings menu</figcaption></figure>
+  </div>
+
+  <h2>Features</h2>
+  <div class="features">
+    <div class="card"><b>works without per-site rules</b><p>Finds the block of the page with the most paragraph text, hides whatever sits beside it and widens the column. Headers, footers and figures stay.</p></div>
+    <div class="card"><b>typography</b><p>Font (Serif, Book, Sans, Wide), text size, line spacing, paragraph spacing and maximum text width. Changes apply live.</p></div>
+    <div class="card"><b>per-site switch</b><p>On by default for ~30 journal sites (Nature, Cell, Science, PNAS, PMC, bioRxiv, eLife…). Turn it on anywhere else with <kbd>Alt</kbd>+<kbd>W</kbd>.</p></div>
+    <div class="card"><b>private</b><p>No data collection, no network requests, no accounts. Settings stay in your browser. <a href="privacy.html">Privacy policy</a>.</p></div>
+  </div>
+
+  <h2>Install</h2>
+  <ol class="steps">
+    <li><b>Chrome Web Store:</b> click <i>Add to Chrome</i> above (when listed).</li>
+    <li><b>Manually:</b> download <a href="WideReader.zip">WideReader.zip</a> and unzip it.</li>
+    <li>Open <code>chrome://extensions</code>, switch on <b>Developer mode</b>, click <b>Load unpacked</b> and pick the unzipped folder.</li>
+  </ol>
+
+  <h2>Publisher status</h2>
+  <div id="status"><p class="note">Loading latest check…</p></div>
+  <p class="note">Checked daily by <a href="https://github.com/{{REPO}}/actions">GitHub Actions</a>: a headless Chrome with the extension opens one open-access article per publisher. <b>blocked</b> means the publisher refused the automated visit (bot protection on cloud servers). That says nothing about whether the extension works there.</p>
+
+  <footer>
+    <span>WideReader v{{VERSION}}</span>
+    <a href="https://github.com/{{REPO}}">source</a>
+    <a href="https://github.com/{{REPO}}/issues">report a site that breaks</a>
+    <a href="privacy.html">privacy</a>
+  </footer>
+</div>
+<script>
+  const cws = document.getElementById("cws");
+  if (cws.getAttribute("href").includes("{{") || !cws.getAttribute("href")) cws.remove();
+
+  fetch("status.json").then(r => r.ok ? r.json() : Promise.reject()).then(data => {
+    const el = document.getElementById("status");
+    const s = data.summary;
+    const when = new Date(data.checked_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    el.innerHTML = `<div class="summary">${s.pass} pass · ${s.fail} fail · ${s.blocked} blocked — ${esc(when)}</div>
+      <table><thead><tr><th>Publisher</th><th>Status</th><th>Details</th></tr></thead><tbody>${
+        data.results.map(r => `<tr><td><a href="${esc(r.url)}">${esc(r.name)}</a></td>
+          <td><span class="pill ${esc(r.status)}">${esc(r.status)}</span></td>
+          <td class="reason">${esc(r.reason)}</td></tr>`).join("")}</tbody></table>`;
+  }).catch(() => {
+    document.getElementById("status").innerHTML = '<p class="note">No check results yet.</p>';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+name: CI / Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 6 * * *"   # daily publisher check
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Extension tests (synthetic layouts)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install playwright pytest
+      - run: python -m playwright install --with-deps chromium
+      - run: pytest -q
+        working-directory: tests
+
+  live:
+    name: Live publisher check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install playwright
+      - run: python -m playwright install --with-deps chromium
+      - name: Check publishers
+        working-directory: tests
+        run: python live_check.py --out ../live-results
+      - name: Summary
+        if: always()
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          d = json.load(open("live-results/status.json"))
+          print("| Publisher | Status | Details |\n|---|---|---|")
+          for r in d["results"]:
+              print(f"| [{r['name']}]({r['url']}) | {r['status']} | {r['reason']} |")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-results
+          path: live-results/
+
+  deploy:
+    name: Deploy GitHub Pages
+    needs: [test, live]
+    # publish even when a publisher check fails, but never when the unit tests fail
+    if: always() && needs.test.result == 'success' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with: { name: live-results, path: live-results }
+      - run: python scripts/build.py --status live-results/status.json --repo "${{ github.repository }}" --cws-url "${{ vars.CWS_URL }}"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+      - id: deployment
+        uses: actions/deploy-pages@v4

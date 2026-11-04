@@ -1,0 +1,41 @@
+name: Release
+
+# Push a tag like v1.3 (matching extension/manifest.json "version") to:
+#   1. run the tests, 2. attach the zip to a GitHub Release,
+#   3. upload + publish to the Chrome Web Store (once the CWS_* secrets are set).
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+      CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+      CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+      CWS_EXTENSION_ID: ${{ vars.CWS_EXTENSION_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install playwright pytest && python -m playwright install --with-deps chromium
+      - run: pytest -q
+        working-directory: tests
+      - name: Check tag matches manifest version
+        run: |
+          v=$(python -c "import json;print(json.load(open('extension/manifest.json'))['version'])")
+          [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "Tag ${GITHUB_REF_NAME} != manifest v$v"; exit 1; }
+      - run: python scripts/build.py --repo "${{ github.repository }}"
+      - name: GitHub Release
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: gh release create "$GITHUB_REF_NAME" dist/WideReader-*.zip --generate-notes --title "WideReader $GITHUB_REF_NAME"
+      - name: Publish to Chrome Web Store
+        if: ${{ env.CWS_CLIENT_ID != '' }}
+        run: |
+          npx --yes chrome-webstore-upload-cli@3 upload --source dist/WideReader.zip \
+            --extension-id "$CWS_EXTENSION_ID" --client-id "$CWS_CLIENT_ID" \
+            --client-secret "$CWS_CLIENT_SECRET" --refresh-token "$CWS_REFRESH_TOKEN" --auto-publish

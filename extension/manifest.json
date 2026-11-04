@@ -1,0 +1,77 @@
+{
+  "manifest_version": 3,
+  "name": "WideReader – full-width journal articles",
+  "version": "1.2",
+  "description": "Hides sidebars on journal sites (Nature, Cell, Science, PNAS, PMC, bioRxiv...) so the article text and figures use the full width.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "WideReader",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "commands": {
+    "toggle-wide": {
+      "suggested_key": {
+        "default": "Alt+W",
+        "mac": "Alt+W"
+      },
+      "description": "Toggle wide article view"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.nature.com/*",
+        "*://*.cell.com/*",
+        "*://*.science.org/*",
+        "*://*.pnas.org/*",
+        "*://*.ncbi.nlm.nih.gov/*",
+        "*://pmc.ncbi.nlm.nih.gov/*",
+        "*://*.biorxiv.org/*",
+        "*://*.medrxiv.org/*",
+        "*://*.sciencedirect.com/*",
+        "*://*.springer.com/*",
+        "*://link.springer.com/*",
+        "*://*.biomedcentral.com/*",
+        "*://*.wiley.com/*",
+        "*://*.elifesciences.org/*",
+        "*://*.plos.org/*",
+        "*://academic.oup.com/*",
+        "*://*.embopress.org/*",
+        "*://*.jci.org/*",
+        "*://*.frontiersin.org/*",
+        "*://*.thelancet.com/*",
+        "*://*.nejm.org/*",
+        "*://*.ahajournals.org/*",
+        "*://*.asnjournals.org/*",
+        "*://*.jasn.org/*",
+        "*://*.kidney-international.org/*",
+        "*://*.rupress.org/*",
+        "*://*.mdpi.com/*",
+        "*://*.arxiv.org/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "homepage_url": "https://github.com/cstocker45/WideReader"
+}
