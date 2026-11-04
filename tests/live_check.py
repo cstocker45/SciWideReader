@@ -48,6 +48,14 @@ MEASURE = """() => {
     articleText: art.innerText.length,
     hidden: document.querySelectorAll('.wr-hidden').length,
     sideScroll: document.scrollingElement.scrollWidth - document.documentElement.clientWidth,
+    // diagnostics: the article and its ancestors, for debugging layouts from CI
+    chain: (() => { const out = []; for (let el = art; el && el !== document.documentElement; el = el.parentElement) {
+      const cs = getComputedStyle(el), b = el.getBoundingClientRect();
+      out.push(`${el.tagName.toLowerCase()}${el.id ? '#' + el.id : ''}.${String(el.className).trim().split(/\s+/).slice(0, 3).join('.')} `
+        + `x=${b.left | 0} w=${b.width | 0} ${cs.display} pos=${cs.position} maxw=${cs.maxWidth} pad=${cs.paddingLeft}/${cs.paddingRight} `
+        + `mar=${cs.marginLeft}/${cs.marginRight}${cs.display.includes('grid') ? ' cols=' + cs.gridTemplateColumns.slice(0, 60) : ''}`
+        + `${el.classList.contains('wr-wide') ? ' [wide]' : ''}${el.classList.contains('wr-flat') ? ' [flat]' : ''}`); }
+      return out; })(),
     beside: beside.slice(0, 5),
   };
 }"""
