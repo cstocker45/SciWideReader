@@ -114,7 +114,7 @@ def test_popup_controls_write_settings(ext):
     ext_id = sw.url.split("/")[2]
     popup = ctx.new_page()
     popup.goto(f"chrome-extension://{ext_id}/popup.html")
-    popup.wait_for_function("document.querySelector('.row[data-key=size] .bar').textContent.includes('●')")
+    popup.locator('.row[data-key=size] .bar .thumb').wait_for()
     popup.click("#fonts button[data-font=book]")
     popup.fill('.row[data-key=line] input', "1.9")
     stored = stored_settings(sw, lambda s: s.get("font") == "book" and s.get("line") == 1.9)
@@ -138,7 +138,7 @@ def test_popup_step_buttons_and_ascii_bar(ext):
     popup = ctx.new_page()
     popup.goto(f"chrome-extension://{ext_id}/popup.html")
     bar = lambda: popup.inner_text('.row[data-key=size] .bar')
-    popup.wait_for_function("document.querySelector('.row[data-key=size] .bar').textContent.includes('●')")
+    popup.locator('.row[data-key=size] .bar .thumb').wait_for()
     assert "●" in bar() and len(bar()) >= 8
     before = bar()
     for _ in range(3):
